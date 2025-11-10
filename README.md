@@ -1,129 +1,573 @@
-PEATIO v2.0 - An open-source crypto currency exchange
-====================================================
+# Peatio Cryptocurrency Exchange - Laravel Edition
 
-### Installation Request or Bug Fixing, fill up this form - ###
-[FILL UP THIS REQUEST FORM](https://docs.google.com/forms/d/1rkBwDWp8pth4XgapYo2oqZgof9kEicjkv-RiL9WKHVc)
+A modern, secure, and scalable cryptocurrency exchange platform built with Laravel 10+ and PHP 8.1+. This is a complete rewrite of the original Peatio exchange from Ruby on Rails to Laravel, preserving all core functionality while modernizing the technology stack.
 
-Peatio is a free and open-source crypto currency exchange implementation with the Rails framework and other cutting-edge technology.
+## 🚀 Features
 
+- **Multi-Currency Support**: Trade Bitcoin, Ethereum, Litecoin, and other cryptocurrencies
+- **High-Performance Trading Engine**: Built-in order matching engine with support for limit and market orders
+- **Secure Wallet Management**: Multi-signature wallets with cold storage support
+- **Two-Factor Authentication**: Google Authenticator, SMS, and Email 2FA options
+- **KYC/AML Compliance**: Built-in identity verification system
+- **Admin Dashboard**: Comprehensive administration panel for managing users, deposits, withdrawals, and trades
+- **RESTful API**: Complete API v2 implementation with OAuth2 authentication
+- **WebSocket Support**: Real-time market data and order book updates
+- **Proof of Solvency**: Cryptographic proof of exchange reserves
+- **Multi-Language Support**: Internationalization ready
+- **Mobile Responsive**: Works seamlessly on desktop and mobile devices
 
-### Mission
+## 📋 Requirements
 
-Our mission is to build the world best open-source crypto currency exchange with a high performance trading engine and safety which can be trusted and enjoyed by users. Additionally we want to move the crypto currency exchange technology forward by providing support and add new features. We are helping people to build easy their own exchange around the world.
+- PHP >= 8.1
+- Composer
+- MySQL >= 5.7 or MariaDB >= 10.3
+- Redis >= 5.0
+- Node.js >= 16.x (for frontend assets)
+- RabbitMQ >= 3.8 (for background jobs)
 
-Help is greatly appreciated, feel free to submit pull-requests or open issues.
+### Recommended
 
+- Nginx or Apache web server
+- Ubuntu 20.04 LTS or higher
+- 4GB RAM minimum, 8GB+ recommended
+- SSD storage for database
 
-### Things You Should Know ###
+## 🔧 Installation
 
-RUNNING AN EXCHANGE IS HARD.
+### 1. Clone the Repository
 
-Peatio makes it easier, but running an exchange is still harder than a blog, which you can download the source code and following the guide or even a cool installer and boom!!! a fancy site is there to profit. We always prioritize security and speed higher than 1-click setup. We split Peatio to many components (processes) so it's flexible to deploy and scalable.
+```bash
+git clone https://github.com/Decipheredmedia/PeatioCryptoExchange.git
+cd PeatioCryptoExchange
+```
 
-SECURITY KNOWLEDGE IS A REQUIREMENT.
+### 2. Install PHP Dependencies
 
-Peatio cannot protect your customers when you leave your admin password 1234567, or open sensitive ports to public internet. No one can. Running an exchange is a very risky task because you're dealing with money directly. If you don't known how to make your exchange secure, hire an expert.
+```bash
+composer install
+```
 
-You must know what you're doing, there's no shortcut. Please get prepared before continue:
+### 3. Environment Configuration
 
-* Rails knowledge
-* Security knowledge
-* System administration
+Copy the example environment file and configure it:
 
+```bash
+cp .env.example .env
+```
 
-### Features
+Edit `.env` file with your configuration:
 
-* Designed as high performance crypto currency exchange.
-* Built-in high performance matching-engine.
-* Built-in [Proof of Solvency](https://iwilcox.me.uk/2014/proving-bitcoin-reserves) Audit.
-* Built-in ticket system for customer support.
-* Usability and scalibility.
-* Websocket API and high frequency trading support.
-* Support multiple digital currencies (eg. Bitcoin, Litecoin, Dogecoin etc.).
-* Easy customization of payment processing for both fiat and digital currencies.
-* SMS and Google Two-Factor authenticaton.
-* [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer).
-* Powerful admin dashboard and management tools.
-* Highly configurable and extendable.
-* Industry standard security out of box.
-* Active community behind.
-* Free and open-source.
-* Created and maintained by [Peatio open-source group](http://peat.io).
+```bash
+# Application
+APP_NAME="Peatio Crypto Exchange"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
 
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=peatio_production
+DB_USERNAME=peatio_user
+DB_PASSWORD=your_secure_password
 
-### Known Exchanges using Peatio
+# Redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=your_redis_password
+REDIS_PORT=6379
 
-* [Yunbi Exchange](https://yunbi.com) - A crypto-currency exchange funded by BitFundPE
-* [One World Coin](https://oneworldcoin.com)
-* [Bitspark](https://bitspark.io) - Bitcoin Exchange in Hong Kong
-* [MarsX.io](https://acx.io) - Australian Cryptocurrency Exchange
+# RabbitMQ
+RABBITMQ_HOST=127.0.0.1
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
 
-### Mobile Apps ###
+# Cryptocurrency Nodes
+BITCOIN_RPC_HOST=127.0.0.1
+BITCOIN_RPC_PORT=8332
+BITCOIN_RPC_USER=bitcoin
+BITCOIN_RPC_PASSWORD=your_bitcoin_rpc_password
 
-* [Boilr](https://github.com/andrefbsantos/boilr) - Cryptocurrency and bullion price alarms for Android
+ETHEREUM_RPC_HOST=127.0.0.1
+ETHEREUM_RPC_PORT=8545
 
-### Requirements
+# Email Configuration
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@yourdomain.com
 
-* Linux / Mac OSX
-* Ruby 2.2.7
-* Rails 4.0+
-* Git 1.7.10+
-* Redis 2.0+
-* MySQL
-* RabbitMQ
+# Two-Factor Authentication
+GOOGLE_2FA_ENABLED=true
 
-** More details are in the [doc](doc).
+# SMS (Twilio)
+TWILIO_SID=your_twilio_sid
+TWILIO_TOKEN=your_twilio_token
+TWILIO_FROM=+1234567890
 
+# Trading Configuration
+TRADING_FEE_PERCENTAGE=0.2
+MINIMUM_TRADE_AMOUNT=0.001
+```
 
-### Getting started
+### 4. Generate Application Key
 
-* [Setup on Mac OS X](doc/setup-local-osx.md)
-* [Setup on Ubuntu](doc/setup-local-ubuntu.md)
-* [Deploy production server](doc/deploy-production-server.md)
-* [Setup Ethereum Server](doc/eth.md)
-### API
+```bash
+php artisan key:generate
+```
 
-You can interact with Peatio through API:
+### 5. Database Setup
 
-* [API v2](http://demo.peat.io/documents/api_v2?lang=en)
-* [Websocket API](http://demo.peat.io/documents/websocket_api)
+Create the database:
 
-Here're some API clients and/or wrappers:
+```bash
+mysql -u root -p
+CREATE DATABASE peatio_production CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'peatio_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON peatio_production.* TO 'peatio_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
 
-* [peatio-client-ruby](https://github.com/peatio/peatio-client-ruby) is the official ruby client of both HTTP/Websocket API.
-* [peatio-client-python by JohnnyZhao](https://github.com/JohnnyZhao/peatio-client-python) is a python client written by JohnnyZhao.
-* [peatio-client-python by czheo](https://github.com/JohnnyZhao/peatio-client-python) is a python wrapper similar to peatio-client-ruby written by czheo.
-* [peatioJavaClient](https://github.com/classic1999/peatioJavaClient.git) is a java client written by classic1999.
-* [yunbi-client-php](https://github.com/panlilu/yunbi-client-php) is a php client written by panlilu.
+Run migrations:
 
-### Custom Style
+```bash
+php artisan migrate
+```
 
-Peatio front-end based Bootstrap 3.0 version and Sass, and you can custom exchange style for your mind.
+### 6. Seed Database (Optional)
 
-* change bootstrap default variables in `vars/_bootstrap.css.scss`
-* change peatio custom default variables in `vars/_basic.css.scss`
-* add your custom variables in `vars/_custom.css.scss`
-* add your custom css style in `layouts/_custom.css.scss`
-* add or change features style in `features/_xyz.css.scss'
+Seed the database with sample data for development:
 
-`vars/_custom.css.scss` can overwrite `vars/_basic.css.scss` defined variables
-`layout/_custom.css.scss` can overwrite `layout/_basic.css.scss` and `layoputs/_header.css.scss` style
+```bash
+php artisan db:seed
+```
 
-### Getting Involved
+### 7. Install Frontend Dependencies
 
-Want to report a bug, request a feature, contribute or translate Peatio?
+```bash
+npm install
+npm run build
+```
 
-* Browse our [issues](https://github.com/peatio/peatio/issues), comment on proposals, report bugs.
-* Clone the peatio repo, make some changes according to our development guidelines and issue a pull-request with your changes.
-* Anything you want to tell us please send it to [community@peatio.com](mailto:me@muhnagy.com)
-* If you need technical support or customization service, contact us: [sales@peatio.com](mailto:me@muhnagy.com)
+### 8. Storage Permissions
 
+Set proper permissions for storage directories:
 
-### License
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
 
-Peatio is released under the terms of the MIT license. See [http://peatio.mit-license.org](http://peatio.mit-license.org) for more information.
+### 9. Queue Workers
 
+Start the queue worker for background jobs:
 
+```bash
+php artisan queue:work --daemon
+```
 
+For production, use Supervisor to manage queue workers:
 
+```bash
+sudo apt-get install supervisor
+```
 
+Create supervisor config at `/etc/supervisor/conf.d/peatio-worker.conf`:
+
+```ini
+[program:peatio-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path/to/peatio/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=4
+redirect_stderr=true
+stdout_logfile=/path/to/peatio/storage/logs/worker.log
+stopwaitsecs=3600
+```
+
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start peatio-worker:*
+```
+
+### 10. WebSocket Server (Optional)
+
+For real-time updates, start the WebSocket server:
+
+```bash
+php artisan websocket:serve
+```
+
+## 🐳 Docker Installation
+
+We provide a Docker setup for easy deployment:
+
+### 1. Install Docker and Docker Compose
+
+```bash
+sudo apt-get update
+sudo apt-get install docker.io docker-compose
+```
+
+### 2. Build and Start Containers
+
+```bash
+docker-compose up -d
+```
+
+### 3. Run Migrations
+
+```bash
+docker-compose exec app php artisan migrate
+```
+
+## 📝 Configuration
+
+### Cryptocurrency Nodes
+
+You need to configure RPC access to cryptocurrency nodes:
+
+#### Bitcoin
+
+Install Bitcoin Core:
+
+```bash
+sudo add-apt-repository ppa:bitcoin/bitcoin
+sudo apt-get update
+sudo apt-get install bitcoind
+```
+
+Configure `~/.bitcoin/bitcoin.conf`:
+
+```ini
+server=1
+rpcuser=bitcoin
+rpcpassword=your_rpc_password
+rpcallowip=127.0.0.1
+```
+
+#### Ethereum
+
+Install Geth:
+
+```bash
+sudo add-apt-repository -y ppa:ethereum/ethereum
+sudo apt-get update
+sudo apt-get install ethereum
+```
+
+Start Geth with RPC enabled:
+
+```bash
+geth --http --http.addr 127.0.0.1 --http.port 8545 --syncmode "fast"
+```
+
+### Admin User
+
+Create an admin user:
+
+```bash
+php artisan tinker
+```
+
+```php
+$user = App\Models\User::create([
+    'email' => 'admin@example.com',
+    'password' => Hash::make('secure_password'),
+    'sn' => 'SN' . strtoupper(uniqid()),
+    'activated' => true,
+]);
+$user->assignRole('admin');
+```
+
+## 🔐 Security
+
+### SSL/TLS Configuration
+
+Always use HTTPS in production. Configure Nginx with Let's Encrypt:
+
+```bash
+sudo apt-get install certbot python3-certbot-nginx
+sudo certbot --nginx -d yourdomain.com
+```
+
+### API Rate Limiting
+
+API rate limiting is enabled by default (60 requests per minute). Adjust in `routes/api.php`.
+
+### Database Backups
+
+Set up automated database backups:
+
+```bash
+# Add to crontab
+0 2 * * * /usr/bin/mysqldump -u peatio_user -p'password' peatio_production > /backups/peatio_$(date +\%Y\%m\%d).sql
+```
+
+## 📊 Database Seeding
+
+### Seed Currencies
+
+```bash
+php artisan db:seed --class=CurrencySeeder
+```
+
+This will create:
+- Bitcoin (BTC)
+- Ethereum (ETH)
+- Litecoin (LTC)
+- USD (Fiat)
+
+### Seed Markets
+
+```bash
+php artisan db:seed --class=MarketSeeder
+```
+
+This creates trading pairs:
+- BTC/USD
+- ETH/USD
+- LTC/USD
+- ETH/BTC
+
+## 🌐 API Documentation
+
+### Authentication
+
+The API uses OAuth2 for authentication. Get your API keys from the user dashboard.
+
+### Endpoints
+
+#### Public Endpoints
+
+- `GET /api/v2/markets` - List all markets
+- `GET /api/v2/markets/{id}/tickers` - Get market ticker
+- `GET /api/v2/markets/{id}/depth` - Get order book depth
+- `GET /api/v2/markets/{id}/trades` - Get recent trades
+- `GET /api/v2/currencies` - List all currencies
+- `GET /api/v2/timestamp` - Get server timestamp
+
+#### Private Endpoints (Require Authentication)
+
+**Accounts**
+- `GET /api/v2/accounts` - List user accounts
+- `GET /api/v2/accounts/{currency}` - Get account balance
+
+**Orders**
+- `GET /api/v2/orders` - List user orders
+- `POST /api/v2/orders` - Create new order
+- `GET /api/v2/orders/{id}` - Get order details
+- `DELETE /api/v2/orders/{id}` - Cancel order
+- `DELETE /api/v2/orders` - Cancel all orders
+
+**Trades**
+- `GET /api/v2/trades` - List all trades
+- `GET /api/v2/trades/my` - List user trades
+
+**Deposits**
+- `GET /api/v2/deposits` - List deposits
+- `GET /api/v2/deposit_address/{currency}` - Get deposit address
+
+**Withdrawals**
+- `GET /api/v2/withdraws` - List withdrawals
+- `POST /api/v2/withdraws` - Create withdrawal
+
+### Example API Calls
+
+#### Create Limit Order
+
+```bash
+curl -X POST https://yourdomain.com/api/v2/orders \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "btcusd",
+    "side": "buy",
+    "volume": "0.1",
+    "price": "45000",
+    "ord_type": "limit"
+  }'
+```
+
+#### Get Account Balances
+
+```bash
+curl -X GET https://yourdomain.com/api/v2/accounts \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## 🔧 Maintenance
+
+### Clear Cache
+
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+### Optimize for Production
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+composer install --optimize-autoloader --no-dev
+```
+
+### Database Migrations
+
+Always backup before running migrations:
+
+```bash
+php artisan migrate
+```
+
+Rollback last migration:
+
+```bash
+php artisan migrate:rollback
+```
+
+## 🧪 Testing
+
+Run PHPUnit tests:
+
+```bash
+php artisan test
+```
+
+Run specific test:
+
+```bash
+php artisan test --filter=TradingEngineTest
+```
+
+## 📈 Monitoring
+
+### Laravel Horizon (Queue Monitoring)
+
+Install and configure Horizon:
+
+```bash
+composer require laravel/horizon
+php artisan horizon:install
+php artisan horizon
+```
+
+Access dashboard at: `https://yourdomain.com/horizon`
+
+### Application Logging
+
+Logs are stored in `storage/logs/laravel.log`
+
+Monitor in real-time:
+
+```bash
+tail -f storage/logs/laravel.log
+```
+
+## 🚀 Deployment
+
+### Nginx Configuration
+
+Create `/etc/nginx/sites-available/peatio`:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    root /var/www/peatio/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+Enable site:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/peatio /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our contributing guidelines before submitting PRs.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+- **Documentation**: https://docs.peatio.com
+- **Issues**: https://github.com/Decipheredmedia/PeatioCryptoExchange/issues
+- **Email**: support@peatio.com
+- **Community**: https://community.peatio.com
+
+## ⚠️ Disclaimer
+
+Running a cryptocurrency exchange involves significant regulatory, security, and financial risks. This software is provided "as is" without warranty of any kind. Users are responsible for:
+
+- Compliance with local regulations and laws
+- Security of funds and user data
+- Regular security audits
+- Proper server configuration and maintenance
+- Understanding cryptocurrency and exchange operations
+
+**DO NOT** use this in production without:
+- Professional security audit
+- Legal consultation
+- Proper insurance
+- Understanding of your responsibilities as an exchange operator
+
+## 🔄 Upgrade from Peatio v1/v2
+
+If you're upgrading from the original Peatio Ruby on Rails version, please follow our migration guide at `docs/MIGRATION.md`.
+
+## 📚 Additional Resources
+
+- [API Documentation](docs/API.md)
+- [Trading Engine Architecture](docs/TRADING_ENGINE.md)
+- [Security Best Practices](docs/SECURITY.md)
+- [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+
+---
+
+**Built with ❤️ by the Peatio Community**
