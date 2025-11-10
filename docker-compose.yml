@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peatio_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - peatio
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+
+  nginx:
+    image: nginx:alpine
+    container_name: peatio_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - peatio
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: peatio_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - peatio
+
+  redis:
+    image: redis:alpine
+    container_name: peatio_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - peatio
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: peatio_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    networks:
+      - peatio
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peatio_worker
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work --sleep=3 --tries=3
+    volumes:
+      - ./:/var/www
+    networks:
+      - peatio
+    depends_on:
+      - app
+      - mysql
+      - redis
+
+networks:
+  peatio:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
