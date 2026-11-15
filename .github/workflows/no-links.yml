@@ -4,6 +4,10 @@ on:
   issue_comment:
     types: [created, edited]
 
+permissions:
+  issues: write
+  pull-requests: write
+
 jobs:
   check_comment:
     runs-on: ubuntu-latest
@@ -14,9 +18,9 @@ jobs:
         run: |
           COMMENT_BODY=$(jq -r '.comment.body' $GITHUB_EVENT_PATH)
           COMMENT_USER=$(jq -r '.comment.user.login' $GITHUB_EVENT_PATH)
-          ALLOWED_USER="your-github-username"  # Change this to your GitHub username
+          ALLOWED_USER="${{ github.repository_owner }}"  # the repo owner may post links
 
-          if [[ "$COMMENT_USER" != "$ALLOWED_USER" ]] && echo "$COMMENT_BODY" | grep -E "http[s]?://"; then
+          if [[ "$COMMENT_USER" != "$ALLOWED_USER" ]] && echo "$COMMENT_BODY" | grep -qE "http[s]?://"; then
             COMMENT_ID=$(jq -r '.comment.id' $GITHUB_EVENT_PATH)
             REPO="${{ github.repository }}"
             

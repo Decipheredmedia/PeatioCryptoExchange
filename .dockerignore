@@ -1,0 +1,12 @@
+.git
+.env
+log
+tmp
+public/assets
+public/uploads
+vendor/bundle
+backups
+assistant
+config/application.yml
+config/database.yml
+config/amqp.yml

@@ -1,18 +1,13 @@
-environments = %w(
-  PUSHER_APP
-  PUSHER_KEY
-  PUSHER_SECRET
-)
-
-environments.select! do |key|
-  ENV[key] =~ /^YOUR/
+# Refuse to boot with the placeholder Pusher values from application.yml.example.
+missing = %w(PUSHER_APP PUSHER_KEY PUSHER_SECRET).select do |key|
+  ENV[key].to_s.strip.empty? || ENV[key] =~ /^YOUR/
 end
 
-unless environments.empty?
+unless missing.empty?
   puts "====================== WARNING ======================"
-  puts "  please check below config in config/application.yml"
+  puts "  please set these values in your .env file:"
   puts ""
-  environments.each do |key| puts "  #{key}" end
+  missing.each { |key| puts "  #{key}" }
   puts "====================================================="
-  raise "config missing"
+  raise "config missing" unless ENV['ALLOW_MISSING_PUSHER'] == 'true'
 end

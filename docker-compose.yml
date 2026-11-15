@@ -1,0 +1,97 @@
+# Everything Peatio needs, in one file. Start it all with:  docker compose up -d
+# Ports are only opened on 127.0.0.1 (this server). The outside world reaches
+# the site through your existing nginx (see deploy/nginx-peatio.conf).
+
+x-peatio: &peatio
+  build: .
+  image: peatio-app:latest
+  env_file: .env
+  restart: unless-stopped
+  depends_on: [db, redis, rabbitmq]
+  volumes:
+    - peatio_assets:/app/public/assets
+    - peatio_uploads:/app/public/uploads
+    - ./config/currencies.yml:/app/config/currencies.yml
+    - ./config/markets.yml:/app/config/markets.yml
+  logging: &logs
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  db:
+    image: mysql:5.7
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-peatio_production}
+      MYSQL_USER: ${DB_USER:-peatio}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql.cnf:/etc/mysql/conf.d/peatio.cnf:ro
+    mem_limit: 450m
+    logging: *logs
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "96mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes: [redis_data:/data]
+    mem_limit: 128m
+    logging: *logs
+
+  rabbitmq:
+    image: rabbitmq:3.13-alpine
+    restart: unless-stopped
+    hostname: peatio-rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-peatio}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes: [rabbitmq_data:/var/lib/rabbitmq]
+    mem_limit: 300m
+    logging: *logs
+
+  web:
+    <<: *peatio
+    command: ["/app/docker/start-web.sh"]
+    ports: ["127.0.0.1:3000:3000"]
+    mem_limit: 900m
+
+  daemons:
+    <<: *peatio
+    command: ["/app/docker/run-daemons.sh"]
+    mem_limit: 700m
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    environment:
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-5m}   # frees the RAM 5 min after the last question
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+    volumes: [ollama_data:/root/.ollama]
+    ports: ["127.0.0.1:11434:11434"]
+    logging: *logs
+
+  assistant:
+    build: ./assistant
+    image: peatio-assistant:latest
+    env_file: .env
+    environment:
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      PEATIO_INTERNAL_URL: http://web:3000
+    restart: unless-stopped
+    depends_on: [db, ollama]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["127.0.0.1:${ASSISTANT_PORT:-8090}:8090"]
+    mem_limit: 200m
+    logging: *logs
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+  ollama_data:
+  peatio_assets:
+  peatio_uploads:

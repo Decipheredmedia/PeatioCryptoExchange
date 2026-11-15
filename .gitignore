@@ -47,3 +47,8 @@ tags
 .ruby-version
 .DS_Store
 .agignore
+
+# Docker / installer
+/backups
+/assistant/__pycache__
+**/__pycache__

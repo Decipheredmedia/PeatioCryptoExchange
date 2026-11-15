@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf" content="{{ csrf }}">
+  <title>{{ name }} – Control Room</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="brand">{{ name }} <span>Control Room</span></div>
+    <div class="model" title="AI model in use">AI: {{ model }}</div>
+    <button class="ghost" id="logout">Sign out</button>
+  </header>
+
+  <nav id="quick">
+    <button data-cmd="status">🩺 Status</button>
+    <button data-cmd="stats">📊 Stats</button>
+    <button data-cmd="show open tickets">🎫 Tickets</button>
+    <button data-cmd="check email">✉️ Email</button>
+    <button data-cmd="help">❓ Help</button>
+  </nav>
+
+  <main id="log" aria-live="polite">
+    <div class="msg bot"><div class="bubble intro">Hi! Tell me what you need in normal words – for example
+      <em>“show open tickets”</em>, <em>“draft reply to ticket 3”</em> or <em>“is everything running?”</em>.
+      I never send or change anything until you press <strong>Confirm</strong>.</div></div>
+  </main>
+
+  <form id="ask">
+    <textarea id="input" rows="1" placeholder="Type a command or question…" autocomplete="off"></textarea>
+    <button type="submit" id="send">Send</button>
+  </form>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
