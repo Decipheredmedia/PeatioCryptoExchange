@@ -20,7 +20,9 @@ Peatio::Application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this).
-  config.serve_static_assets = false
+  # Inside Docker the Rails app serves its own compiled assets (set
+  # RAILS_SERVE_STATIC_FILES=true); behind Passenger/nginx leave it off.
+  config.serve_static_assets = ENV['RAILS_SERVE_STATIC_FILES'] == 'true'
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = Uglifier.new(:mangle => false)
@@ -71,13 +73,19 @@ Peatio::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    port:           ENV["SMTP_PORT"],
+    port:           ENV["SMTP_PORT"].to_i,
     domain:         ENV["SMTP_DOMAIN"],
     address:        ENV["SMTP_ADDRESS"],
     user_name:      ENV["SMTP_USERNAME"],
     password:       ENV["SMTP_PASSWORD"],
-    authentication: ENV["SMTP_AUTHENTICATION"]
+    authentication: ENV["SMTP_AUTHENTICATION"],
+    enable_starttls_auto: true
   }
+
+  # Log to STDOUT when running in Docker so `docker compose logs` shows it.
+  if ENV['RAILS_LOG_TO_STDOUT'] == 'true'
+    config.logger = Logger.new(STDOUT)
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).

@@ -119,9 +119,15 @@ class ApplicationController < ActionController::Base
     gon.ticker = current_market.ticker
     gon.markets = Market.to_hash
 
+    # The browser must connect to Pusher's *websocket* host, not the REST API
+    # host in PUSHER_HOST (that mix-up broke live updates before).
+    pusher_cluster = ENV['PUSHER_CLUSTER'].to_s.strip
+    pusher_ws_host = ENV['PUSHER_WS_HOST'].presence ||
+      (pusher_cluster.empty? ? 'ws.pusherapp.com' : "ws-#{pusher_cluster}.pusher.com")
+
     gon.pusher = {
       key:       ENV['PUSHER_KEY'],
-      wsHost:    ENV['PUSHER_HOST']      || 'ws.pusherapp.com',
+      wsHost:    pusher_ws_host,
       wsPort:    ENV['PUSHER_WS_PORT']   || '80',
       wssPort:   ENV['PUSHER_WSS_PORT']  || '443',
       encrypted: ENV['PUSHER_ENCRYPTED'] == 'true'
